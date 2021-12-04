@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { Post } from './components/Post';
+import { Container } from './components/ui/Container';
 
-interface Post {
+export interface IPost {
   author: {
     id: string;
     name: string;
@@ -12,7 +15,7 @@ interface Post {
 }
 
 export function App() {
-  const [posts, setPosts] = useState<Post[] | null>(null);
+  const [posts, setPosts] = useState<IPost[] | null>(null);
   const [error, setError] = useState();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -24,8 +27,18 @@ export function App() {
         }
         throw response;
       })
-      .then((data) => {
-        setPosts(data);
+      .then((data: IPost[]) => {
+        if (data && data.length) {
+          const stringToDate = data.map((post: IPost) => {
+            return { ...post, publishedAt: new Date(post.publishedAt) };
+          });
+
+          const sortedArray = stringToDate.sort((a: IPost, b: IPost) => {
+            return a.publishedAt.getDate() - b.publishedAt.getDate();
+          });
+
+          setPosts(sortedArray);
+        }
       })
       .catch((error) => {
         setError(error);
@@ -36,14 +49,23 @@ export function App() {
   }, []);
 
   return (
-    <div className="App">
+    <StyledContainer>
       {isLoading && 'Loading...'}
-
       {error && 'Error'}
 
-      {posts?.map((post: Post) => (
-        <div>{post.body}</div>
-      ))}
-    </div>
+      <Container>
+        {posts?.map((post: IPost) => (
+          <Post key={post.id} post={post} />
+        ))}
+      </Container>
+    </StyledContainer>
   );
 }
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: lightgray;
+`;
