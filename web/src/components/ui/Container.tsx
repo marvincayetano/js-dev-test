@@ -38,6 +38,8 @@ const StyledContainer = styled.div`
     margin: 2rem;
     max-width: 48rem;
   }
+
+  overflow-y: scroll;
 `;
 
 const StyledSubContainer = styled.div`
