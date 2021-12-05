@@ -4,18 +4,16 @@ import styled from 'styled-components';
 
 interface Props {
   title?: string;
-  action?: ReactNode;
   children: ReactNode;
 }
 
-export function Container({ title, action, children }: Props) {
+export function Container({ title, children }: Props) {
   return (
     <>
       <StyledContainer>
-        {(title || action) && (
+        {title && (
           <StyledSubContainer>
             {title && <StyledTitle>{title}</StyledTitle>}
-            {action}
           </StyledSubContainer>
         )}
         {children}

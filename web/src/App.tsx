@@ -19,7 +19,7 @@ export interface IPost {
 // DONE: Fetch post data from the provided Express API.
 // DONE: Display a list of posts. Include the post title, summary, author, and publish date in the list.
 // DONE: The list of posts should be displayed in reverse chronological order.
-// Add buttons for each author. Make clicking on an author button filter the list of posts by author.
+// DONE: Add buttons for each author. Make clicking on an author button filter the list of posts by author.
 // DONE: Make the title of each post in the list clickable. When you click a post title, display the formatted post body and title.
 // Implement basic snapshot regression tests tests using Jest for your components. Jest is installed by create-react-app and can be run from the web/ folder with yarn test.
 
@@ -85,7 +85,7 @@ export function App() {
       {isLoading && 'Loading...'}
       {error && 'Error'}
 
-      <Container>
+      <Container title="Posts">
         <p>List of authors</p>
         <StyledAuthorListContainer>
           {isFiltered ? (
