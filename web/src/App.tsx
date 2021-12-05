@@ -41,11 +41,11 @@ export function App() {
       })
       .then((data: IPost[]) => {
         if (data && data.length) {
-          const authors = {} as any;
+          const authorsObj = {} as any;
           const convertedStringToDate = [];
 
           for (const post of data) {
-            authors[post.author.id] = post.author;
+            authorsObj[post.author.id] = post.author;
             convertedStringToDate.push({
               ...post,
               publishedAt: new Date(post.publishedAt),
@@ -58,13 +58,13 @@ export function App() {
             }
           );
 
-          setAuthors(Object.values(authors));
+          setAuthors(Object.values(authorsObj));
           setFilteredPosts(sortedArray);
           setPosts(sortedArray);
         }
       })
-      .catch((error) => {
-        setError(error);
+      .catch((err) => {
+        setError(err);
       })
       .finally(() => {
         setIsLoading(false);
