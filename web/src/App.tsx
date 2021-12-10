@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Post } from './components/Post';
 import { Container } from './components/ui/Container';
+import useFetch from './hooks/useFetch';
 
 interface IAuthor {
   id: string;
@@ -25,51 +26,36 @@ export interface IPost {
 
 export function App() {
   const [posts, setPosts] = useState<IPost[] | null>(null);
-  const [error, setError] = useState();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [authors, setAuthors] = useState<IAuthor[] | null>(null);
   const [filteredPosts, setFilteredPosts] = useState<IPost[] | null>(null);
   const [isFiltered, setIsFiltered] = useState<boolean>(false);
 
+  const { response, error, isLoading } = useFetch(
+    'http://localhost:4000/posts'
+  );
+
   useEffect(() => {
-    fetch('http://localhost:4000/posts')
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw response;
-      })
-      .then((data: IPost[]) => {
-        if (data && data.length) {
-          const authorsObj = {} as any;
-          const convertedStringToDate = [];
+    if (response && response.length) {
+      const authorsObj = {} as any;
+      const convertedStringToDate = [];
 
-          for (const post of data) {
-            authorsObj[post.author.id] = post.author;
-            convertedStringToDate.push({
-              ...post,
-              publishedAt: new Date(post.publishedAt),
-            });
-          }
+      for (const post of response as IPost[]) {
+        authorsObj[post.author.id] = post.author;
+        convertedStringToDate.push({
+          ...post,
+          publishedAt: new Date(post.publishedAt),
+        });
+      }
 
-          const sortedArray = convertedStringToDate.sort(
-            (a: IPost, b: IPost) => {
-              return b.publishedAt.getTime() - a.publishedAt.getTime();
-            }
-          );
-
-          setAuthors(Object.values(authorsObj));
-          setFilteredPosts(sortedArray);
-          setPosts(sortedArray);
-        }
-      })
-      .catch((err) => {
-        setError(err);
-      })
-      .finally(() => {
-        setIsLoading(false);
+      const sortedArray = convertedStringToDate.sort((a: IPost, b: IPost) => {
+        return b.publishedAt.getTime() - a.publishedAt.getTime();
       });
-  }, []);
+
+      setAuthors(Object.values(authorsObj));
+      setFilteredPosts(sortedArray);
+      setPosts(sortedArray);
+    }
+  }, [response]);
 
   function filterPosts(id: string) {
     const filteredData = posts?.filter((post) => {
