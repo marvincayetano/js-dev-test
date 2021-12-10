@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Post } from './components/Post';
 import { Container } from './components/ui/Container';
 import useFetch from './hooks/useFetch';
+import ErrorBoundary from './ErrorBoundary';
 
 interface IAuthor {
   id: string;
@@ -71,31 +72,33 @@ export function App() {
       {isLoading && 'Loading...'}
       {error && 'Error'}
 
-      <Container title="Posts">
-        <p>List of authors</p>
-        <StyledAuthorListContainer>
-          {isFiltered ? (
-            <button
-              onClick={() => {
-                setIsFiltered(false);
-                setFilteredPosts(posts);
-              }}
-            >
-              Clear
-            </button>
-          ) : (
-            authors?.map((author: IAuthor) => (
-              <button key={author.id} onClick={() => filterPosts(author.id)}>
-                {author.name}
+      <ErrorBoundary>
+        <Container title="Posts">
+          <p>List of authors</p>
+          <StyledAuthorListContainer>
+            {isFiltered ? (
+              <button
+                onClick={() => {
+                  setIsFiltered(false);
+                  setFilteredPosts(posts);
+                }}
+              >
+                Clear
               </button>
-            ))
-          )}
-        </StyledAuthorListContainer>
+            ) : (
+              authors?.map((author: IAuthor) => (
+                <button key={author.id} onClick={() => filterPosts(author.id)}>
+                  {author.name}
+                </button>
+              ))
+            )}
+          </StyledAuthorListContainer>
 
-        {filteredPosts?.map((post: IPost) => (
-          <Post key={post.id} post={post} />
-        ))}
-      </Container>
+          {filteredPosts?.map((post: IPost) => (
+            <Post key={post.id} post={post} />
+          ))}
+        </Container>
+      </ErrorBoundary>
     </StyledContainer>
   );
 }
